@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:fast_bridge_front/data/http/ws_client.dart';
 import 'package:fast_bridge_front/data/http/http_client.dart';
 import 'package:fast_bridge_front/data/models/screen_info.dart';
 import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
 import 'package:fast_bridge_front/data/models/fetch_device_info.dart';
+
 
 class DeviceRepository {
   final String baseUrl = 'http://127.0.0.1:8000';
@@ -61,4 +63,19 @@ class DeviceRepository {
     }    
   }
 
+  Future<WsClient> connectScreenStream({required String serial}) async {
+    final wsClient = WsClient();
+    await wsClient.connect(url: 'ws://127.0.0.1:8000/ws/device/$serial/control');
+    return wsClient;
+  }
+
+  Future<bool> healthCheck() async {
+    try {
+      final response = await client.get(url: '$baseUrl/health')
+          .timeout(const Duration(seconds: 5));
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 }

@@ -4,17 +4,12 @@ class CustomButton extends StatelessWidget {
   const CustomButton({super.key, required this.serial});
   final String serial;
 
-
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black),
-      child: Text(serial, style: .new(color: Colors.black)),
-      onPressed: () {
-      Navigator.pushNamed(context, '/device/$serial');
-    
-    });
+    return FilledButton.icon(
+      icon: const Icon(Icons.phone_android_rounded, size: 18),
+      label: Text(serial),
+      onPressed: () => Navigator.pushNamed(context, '/device/$serial'),
+    );
   }
 }

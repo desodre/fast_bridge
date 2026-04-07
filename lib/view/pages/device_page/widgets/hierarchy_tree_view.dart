@@ -1,6 +1,5 @@
 import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class HierarchyTreeView extends StatelessWidget {
   final UiHierarchy hierarchy;
@@ -16,17 +15,19 @@ class HierarchyTreeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white60,
-      child: ListView.builder(itemCount: hierarchy.nodes.length,itemBuilder:(context, index){
-        return NodeTiles(node: hierarchy.nodes[index], selectedUiNode: selectedNode,onNodeSelected:onNodeSelected );
-      } ),
+    return ListView.builder(
+      itemCount: hierarchy.nodes.length,
+      itemBuilder: (context, index) {
+        return NodeTiles(
+          node: hierarchy.nodes[index],
+          selectedUiNode: selectedNode,
+          onNodeSelected: onNodeSelected,
+        );
+      },
     );
   }
 }
 
-
-// ignore: must_be_immutable
 class NodeTiles extends StatefulWidget {
   final UiNode node;
   final ValueChanged<UiNode?> onNodeSelected;
@@ -51,69 +52,63 @@ class _NodeTilesState extends State<NodeTiles> {
   @override
   Widget build(BuildContext context) {
     final hasChildren = widget.node.children.isNotEmpty;
+    final isSelected = widget.selectedUiNode == widget.node;
+    final cs = Theme.of(context).colorScheme;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onHover: (value) {
-            if (value) {
-              setState(() {
-              });
-              widget.onNodeSelected(widget.node);
-            }
-          },
+          borderRadius: BorderRadius.circular(6),
           onTap: () {
             setState(() {
+              widget.onNodeSelected(widget.node);
               _isExpanded = !_isExpanded;
-              
-
             });
           },
-          child: Padding(
-            padding: .only(left: widget.depth * 20.0, top: 4, bottom: 4),
+          child: Container(
+            padding: EdgeInsets.only(left: widget.depth * 18.0 + 6, top: 5, bottom: 5, right: 6),
+            decoration: BoxDecoration(
+              color: isSelected ? cs.primary.withAlpha(30) : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+              border: isSelected ? Border.all(color: cs.primary.withAlpha(60)) : null,
+            ),
             child: Row(
               children: [
                 Icon(
                   hasChildren
-                      ? (_isExpanded ? Icons.expand_less : Icons.expand_more)
-                      : Icons.check_box_outline_blank,
+                      ? (_isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded)
+                      : Icons.remove_rounded,
                   size: 16,
-                  color: Colors.grey,
+                  color: cs.primary.withAlpha(150),
                 ),
-                SizedBox(width: 4),
-                HugeIcon(icon:
-                  hasChildren
-                      ? HugeIcons.strokeRoundedFolder01
-                      : HugeIcons.strokeRoundedFile01,
-                  color: Colors.blueGrey,
-                  size: 20,
+                const SizedBox(width: 4),
+                Icon(
+                  hasChildren ? Icons.folder_outlined : Icons.description_outlined,
+                  color: cs.primary,
+                  size: 16,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Flexible(
                   child: Text.rich(
                     TextSpan(
                       children: [
                         TextSpan(
                           text: '${widget.node.index} ',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurface.withAlpha(220)),
                         ),
                         TextSpan(
-                          text: widget.node.className
-                              .split('.')
-                              .last, // Apenas o nome da classe
-                          style: const TextStyle(
-                            color: Colors.teal,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          text: widget.node.className.split('.').last,
+                          style: TextStyle(color: cs.primary, fontWeight: FontWeight.w600, fontSize: 13),
                         ),
                         if (widget.node.resourceId.isNotEmpty)
                           TextSpan(
-                            text: ' id=${widget.node.resourceId.split('/').last}',
-                            style: const TextStyle(color: Colors.blueAccent),
+                            text: ' ${widget.node.resourceId.split('/').last}',
+                            style: TextStyle(color: cs.secondary, fontSize: 12),
                           ),
                       ],
                     ),
-                    overflow: .ellipsis,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -121,9 +116,14 @@ class _NodeTilesState extends State<NodeTiles> {
           ),
         ),
         if (_isExpanded && hasChildren)
-        ...widget.node.children.map((child) {
-          return NodeTiles(node: child, depth: widget.depth + 1, onNodeSelected: widget.onNodeSelected, selectedUiNode: widget.selectedUiNode,);
-        })
+          ...widget.node.children.map((child) {
+            return NodeTiles(
+              node: child,
+              depth: widget.depth + 1,
+              onNodeSelected: widget.onNodeSelected,
+              selectedUiNode: widget.selectedUiNode,
+            );
+          }),
       ],
     );
   }

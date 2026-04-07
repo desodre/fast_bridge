@@ -7,19 +7,28 @@ class FloatButtonFetch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(tooltip: 'Refresh',
-      child: SizedBox(
-        width: 50,
-        height: 50,
-        child: Image.asset('assets/icons/refresh_icon.gif'),
-      ),
+    return FloatingActionButton(
+      tooltip: 'Refresh devices',
       onPressed: () async {
-        deviceStore.getDevices();
-        deviceStore.devices.addListener(() {});
+        await deviceStore.getDevices();
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(behavior: .floating, content: Text('Devices updated')),
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.sync, color: Colors.white, size: 18),
+                const SizedBox(width: 10),
+                Text(
+                  'Device list refreshed',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 2),
+          ),
         );
       },
+      child: const Icon(Icons.refresh_rounded, size: 26),
     );
   }
 }
