@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^sudo dnf install -y mpv-devel$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

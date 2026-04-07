@@ -37,6 +37,10 @@ dependencies:
   http: ^1.6.0
   xml: ^6.6.1
   hugeicons: ^1.1.5
+  web_socket_channel: ^3.0.3
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_linux: ^1.2.1
 
 dev_dependencies:
   flutter_test:
