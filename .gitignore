@@ -32,3 +32,4 @@ app.*.map.json
 CLAUDE.md
 .claude/
 .github/
+LOCAL_CHECKLIST.md
