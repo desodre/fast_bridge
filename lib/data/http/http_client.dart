@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 abstract class IhttpClient {
   Future get({required String url});
   Future post({required String url, required String body});
+  Future put({required String url, required String body});
 }
 
 class HttpClient implements IhttpClient {
@@ -21,10 +22,23 @@ class HttpClient implements IhttpClient {
     final response = await client.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
+      body: body,
     );
     log('POST: $url STATUS: ${response.statusCode}');
     return response;
   }
+
+  @override
+  Future<http.Response> put({required String url, required String body}) async {
+    final response = await client.put(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+    log('PUT: $url STATUS: ${response.statusCode}');
+    return response;
+  }
+
 
 
 }

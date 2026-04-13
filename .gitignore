@@ -31,3 +31,4 @@ app.*.map.json
 /android/app/release
 CLAUDE.md
 .claude/
+.github/
