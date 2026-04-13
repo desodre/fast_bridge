@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:fast_bridge_front/data/http/ws_client.dart';
 import 'package:fast_bridge_front/data/http/http_client.dart';
+import 'package:fast_bridge_front/data/models/file_node.dart';
 import 'package:fast_bridge_front/data/models/screen_info.dart';
 import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
 import 'package:fast_bridge_front/data/models/fetch_device_info.dart';
@@ -87,6 +88,20 @@ class DeviceRepository {
       url: 'ws://127.0.0.1:8000/ws/device/$serial/control',
     );
     return wsClient;
+  }
+
+  Future<FileListResponse> listFiles({
+    required String serial,
+    required String path,
+  }) async {
+    final encodedPath = Uri.encodeComponent(path);
+    final response = await client.get(
+      url: '$baseUrl/device/$serial/file_manager?path=$encodedPath',
+    );
+    if (response.statusCode == 200) {
+      return FileListResponse.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('Error listing files at $path');
   }
 
   Future<bool> healthCheck() async {

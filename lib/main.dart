@@ -1,5 +1,6 @@
 import 'package:fast_bridge_front/view/pages/home/home_page.dart';
 import 'package:fast_bridge_front/view/pages/device_page/device_page.dart';
+import 'package:fast_bridge_front/view/pages/file_manager/file_manager_page.dart';
 import 'package:fast_bridge_front/view/pages/full_control_window/full_control_window.dart';
 import 'package:fast_bridge_front/view/pages/settings/settings_page.dart';
 import 'package:fast_bridge_front/view/ui/theme.dart';
@@ -53,9 +54,18 @@ class FastBridgeApp extends StatelessWidget {
                 uri.pathSegments[0] == 'device' &&
                 uri.pathSegments[2] == 'full_control') {
               final serial = uri.pathSegments[1];
-
               return MaterialPageRoute(
                 builder: (BuildContext context) => FullControlWindow(serial: serial),
+                settings: settings,
+              );
+            }
+
+            if (uri.pathSegments.length == 3 &&
+                uri.pathSegments[0] == 'device' &&
+                uri.pathSegments[2] == 'file_manager') {
+              final serial = uri.pathSegments[1];
+              return MaterialPageRoute(
+                builder: (BuildContext context) => FileManagerPage(serial: serial),
                 settings: settings,
               );
             }
