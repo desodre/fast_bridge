@@ -35,12 +35,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   http: ^1.6.0
-  xml: ^6.6.1
-  hugeicons: ^1.1.5
+  xml: ^7.0.1
   web_socket_channel: ^3.0.3
-  media_kit: ^1.2.6
-  media_kit_video: ^2.0.1
-  media_kit_libs_linux: ^1.2.1
+  adb_utils: ^0.3.1
+
 
 dev_dependencies:
   flutter_test:
