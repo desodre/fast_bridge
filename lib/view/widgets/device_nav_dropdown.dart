@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 
-enum DeviceSection { device, terminal, fileManager, appManager,  fullControl }
+enum DeviceSection { device, terminal, fileManager, appManager, fullControl }
 
 extension DeviceSectionX on DeviceSection {
   String label() => switch (this) {
-        DeviceSection.device => 'Device',
-        DeviceSection.terminal => 'Terminal',
-        DeviceSection.fileManager => 'File Manager',
-        DeviceSection.appManager => 'App Manager',
-        DeviceSection.fullControl => 'Full Control',
-      };
+    DeviceSection.device => 'Device',
+    DeviceSection.terminal => 'Terminal',
+    DeviceSection.fileManager => 'File Manager',
+    DeviceSection.appManager => 'App Manager',
+    DeviceSection.fullControl => 'Full Control',
+  };
 
   IconData icon() => switch (this) {
-        DeviceSection.device => Icons.phone_android_rounded,
-        DeviceSection.terminal => Icons.terminal_rounded,
-        DeviceSection.fileManager => Icons.folder_rounded,
-        DeviceSection.appManager => Icons.apps_rounded,
-        DeviceSection.fullControl => Icons.fullscreen_rounded,
-      };
+    DeviceSection.device => Icons.phone_android_rounded,
+    DeviceSection.terminal => Icons.terminal_rounded,
+    DeviceSection.fileManager => Icons.folder_rounded,
+    DeviceSection.appManager => Icons.apps_rounded,
+    DeviceSection.fullControl => Icons.fullscreen_rounded,
+  };
 
   String? route(String serial) => switch (this) {
-        DeviceSection.device => '/device/$serial',
-        DeviceSection.fileManager => '/device/$serial/file_manager',
-        DeviceSection.terminal => null,
-        DeviceSection.appManager => null,
-        DeviceSection.fullControl => '/device/$serial/full_control',
-      };
+    DeviceSection.device => '/device/$serial',
+    DeviceSection.fileManager => '/device/$serial/file_manager',
+    DeviceSection.terminal => null,
+    DeviceSection.appManager => null,
+    DeviceSection.fullControl => '/device/$serial/full_control',
+  };
 }
 
 class DeviceNavDropdown extends StatelessWidget {
@@ -86,16 +86,13 @@ class DeviceNavDropdown extends StatelessWidget {
               Icon(
                 section.icon(),
                 size: 18,
-                color: isSelected
-                    ? cs.primary
-                    : cs.onSurface.withAlpha(180),
+                color: isSelected ? cs.primary : cs.onSurface.withAlpha(180),
               ),
               const SizedBox(width: 10),
               Text(
                 section.label(),
                 style: TextStyle(
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   color: isSelected ? cs.primary : null,
                 ),
               ),

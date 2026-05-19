@@ -137,6 +137,7 @@ class _DevicePageState extends State<DevicePage> {
                       child: HierarchyPanel(
                         hierarchy: _viewModel.hierarchy,
                         isLoading: _viewModel.isLoadingHierarchy,
+                        erro: _viewModel.erro,
                         selectedNode: _viewModel.selectedNode,
                         onNodeSelected: _viewModel.selectNode,
                       ),

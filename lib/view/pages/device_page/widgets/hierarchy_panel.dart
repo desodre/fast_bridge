@@ -7,12 +7,14 @@ class HierarchyPanel extends StatelessWidget {
     super.key,
     required this.hierarchy,
     required this.isLoading,
+    required this.erro,
     required this.selectedNode,
     required this.onNodeSelected,
   });
 
   final ValueNotifier<UiHierarchy?> hierarchy;
   final ValueNotifier<bool> isLoading;
+  final ValueNotifier<String> erro;
   final ValueNotifier<UiNode?> selectedNode;
   final ValueChanged<UiNode?> onNodeSelected;
 
@@ -46,7 +48,37 @@ class HierarchyPanel extends StatelessWidget {
                     valueListenable: hierarchy,
                     builder: (context, hier, _) {
                       if (hier == null) {
-                        return const Center(child: CircularProgressIndicator());
+                        return ValueListenableBuilder<String>(
+                          valueListenable: erro,
+                          builder: (context, errorText, _) {
+                            if (errorText.isEmpty) {
+                              return const Center(
+                                child: Text('No hierarchy loaded yet.'),
+                              );
+                            }
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline_rounded,
+                                      color: cs.error,
+                                      size: 42,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      errorText,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: cs.error),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
                       }
                       return ValueListenableBuilder<UiNode?>(
                         valueListenable: selectedNode,

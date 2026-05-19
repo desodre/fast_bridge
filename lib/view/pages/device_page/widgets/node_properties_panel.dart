@@ -3,10 +3,7 @@ import 'package:fast_bridge_front/view/pages/device_page/widgets/node_preview_da
 import 'package:flutter/material.dart';
 
 class NodePropertiesPanel extends StatelessWidget {
-  const NodePropertiesPanel({
-    super.key,
-    required this.selectedNode,
-  });
+  const NodePropertiesPanel({super.key, required this.selectedNode});
 
   final ValueNotifier<UiNode?> selectedNode;
 

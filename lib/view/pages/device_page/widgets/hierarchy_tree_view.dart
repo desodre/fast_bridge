@@ -67,24 +67,35 @@ class _NodeTilesState extends State<NodeTiles> {
             });
           },
           child: Container(
-            padding: EdgeInsets.only(left: widget.depth * 18.0 + 6, top: 5, bottom: 5, right: 6),
+            padding: EdgeInsets.only(
+              left: widget.depth * 18.0 + 6,
+              top: 5,
+              bottom: 5,
+              right: 6,
+            ),
             decoration: BoxDecoration(
               color: isSelected ? cs.primary.withAlpha(30) : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
-              border: isSelected ? Border.all(color: cs.primary.withAlpha(60)) : null,
+              border: isSelected
+                  ? Border.all(color: cs.primary.withAlpha(60))
+                  : null,
             ),
             child: Row(
               children: [
                 Icon(
                   hasChildren
-                      ? (_isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded)
+                      ? (_isExpanded
+                            ? Icons.expand_less_rounded
+                            : Icons.expand_more_rounded)
                       : Icons.remove_rounded,
                   size: 16,
                   color: cs.primary.withAlpha(150),
                 ),
                 const SizedBox(width: 4),
                 Icon(
-                  hasChildren ? Icons.folder_outlined : Icons.description_outlined,
+                  hasChildren
+                      ? Icons.folder_outlined
+                      : Icons.description_outlined,
                   color: cs.primary,
                   size: 16,
                 ),
@@ -95,11 +106,19 @@ class _NodeTilesState extends State<NodeTiles> {
                       children: [
                         TextSpan(
                           text: '${widget.node.index} ',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurface.withAlpha(220)),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            color: cs.onSurface.withAlpha(220),
+                          ),
                         ),
                         TextSpan(
                           text: widget.node.className.split('.').last,
-                          style: TextStyle(color: cs.primary, fontWeight: FontWeight.w600, fontSize: 13),
+                          style: TextStyle(
+                            color: cs.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                         ),
                         if (widget.node.resourceId.isNotEmpty)
                           TextSpan(

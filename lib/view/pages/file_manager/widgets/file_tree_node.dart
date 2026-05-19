@@ -43,21 +43,21 @@ class FileTreeNode extends StatelessWidget {
                   width: 18,
                   child: node.isDir
                       ? isLoading
-                          ? SizedBox(
-                              width: 12,
-                              height: 12,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1.5,
-                                color: cs.primary,
-                              ),
-                            )
-                          : Icon(
-                              isExpanded
-                                  ? Icons.expand_more_rounded
-                                  : Icons.chevron_right_rounded,
-                              size: 16,
-                              color: cs.primary.withAlpha(160),
-                            )
+                            ? SizedBox(
+                                width: 12,
+                                height: 12,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  color: cs.primary,
+                                ),
+                              )
+                            : Icon(
+                                isExpanded
+                                    ? Icons.expand_more_rounded
+                                    : Icons.chevron_right_rounded,
+                                size: 16,
+                                color: cs.primary.withAlpha(160),
+                              )
                       : const SizedBox.shrink(),
                 ),
                 const SizedBox(width: 4),
@@ -65,9 +65,7 @@ class FileTreeNode extends StatelessWidget {
                 Icon(
                   _iconFor(node),
                   size: 16,
-                  color: node.isDir
-                      ? cs.primary
-                      : cs.onSurface.withAlpha(160),
+                  color: node.isDir ? cs.primary : cs.onSurface.withAlpha(160),
                 ),
                 const SizedBox(width: 8),
                 // name
@@ -122,8 +120,7 @@ class FileTreeNode extends StatelessWidget {
     if (!node.isDir) {
       final ext = node.name.split('.').last.toLowerCase();
       return switch (ext) {
-        'jpg' || 'jpeg' || 'png' || 'gif' || 'webp' =>
-          Icons.image_rounded,
+        'jpg' || 'jpeg' || 'png' || 'gif' || 'webp' => Icons.image_rounded,
         'mp4' || 'mkv' || 'avi' || 'mov' => Icons.video_file_rounded,
         'mp3' || 'wav' || 'ogg' || 'flac' => Icons.audio_file_rounded,
         'apk' => Icons.android_rounded,

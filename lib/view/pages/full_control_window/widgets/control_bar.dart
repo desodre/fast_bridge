@@ -91,11 +91,7 @@ class ControlBar extends StatelessWidget {
 }
 
 class _CtrlBtn extends StatelessWidget {
-  const _CtrlBtn({
-    required this.icon,
-    required this.tip,
-    required this.onTap,
-  });
+  const _CtrlBtn({required this.icon, required this.tip, required this.onTap});
 
   final IconData icon;
   final String tip;

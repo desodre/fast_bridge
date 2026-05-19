@@ -38,8 +38,7 @@ class _HomePageState extends State<HomePage> {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor:
-            ok ? const Color(0xDD2E7D32) : const Color(0xDDB71C1C),
+        backgroundColor: ok ? const Color(0xDD2E7D32) : const Color(0xDDB71C1C),
         duration: Duration(seconds: ok ? 2 : 5),
         content: Row(
           children: [
@@ -51,8 +50,8 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: Text(
                 ok
-                    ? 'Backend online'
-                    : 'Backend offline — verifique se o servidor está rodando',
+                    ? 'ADB server online'
+                    : 'ADB server offline — verifique se o adb está ativo',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -80,7 +79,11 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.cable_rounded, color: theme.colorScheme.primary, size: 24),
+            Icon(
+              Icons.cable_rounded,
+              color: theme.colorScheme.primary,
+              size: 24,
+            ),
             const SizedBox(width: 8),
             const Text('Fast Bridge'),
           ],

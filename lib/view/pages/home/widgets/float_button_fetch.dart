@@ -20,7 +20,10 @@ class FloatButtonFetch extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   'Device list refreshed',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

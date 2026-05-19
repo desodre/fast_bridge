@@ -64,7 +64,10 @@ class _FullControlWindowState extends State<FullControlWindow> {
               final color = isLive ? Colors.green : Colors.red;
               return Container(
                 margin: const EdgeInsets.only(right: 14),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: color.withAlpha(30),
                   borderRadius: BorderRadius.circular(8),
@@ -105,7 +108,9 @@ class _FullControlWindowState extends State<FullControlWindow> {
       case ConnState.fetchingInfo:
         return const LoadingIndicator(message: 'Getting device info...');
       case ConnState.connectingWs:
-        return const LoadingIndicator(message: 'Connecting to device stream...');
+        return const LoadingIndicator(
+          message: 'Connecting to device stream...',
+        );
       case ConnState.error:
         return ValueListenableBuilder<String?>(
           valueListenable: _viewModel.error,

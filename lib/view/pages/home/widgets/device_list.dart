@@ -4,11 +4,7 @@ import 'package:fast_bridge_front/view/widgets/empty_state.dart';
 import 'package:flutter/material.dart';
 
 class DeviceList extends StatelessWidget {
-  const DeviceList({
-    super.key,
-    required this.devices,
-    required this.isLoading,
-  });
+  const DeviceList({super.key, required this.devices, required this.isLoading});
 
   final List<DeviceInfo> devices;
   final ValueNotifier<bool> isLoading;

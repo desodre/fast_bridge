@@ -62,7 +62,9 @@ final ThemeData customTheme = ThemeData(
     backgroundColor: _accent,
     foregroundColor: Color(0xFF0F172A),
     elevation: 4,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+    ),
   ),
   iconButtonTheme: IconButtonThemeData(
     style: IconButton.styleFrom(foregroundColor: _textBody),
@@ -71,7 +73,9 @@ final ThemeData customTheme = ThemeData(
     style: FilledButton.styleFrom(
       backgroundColor: _accent,
       foregroundColor: Color(0xFF0F172A),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     ),
   ),
@@ -96,17 +100,35 @@ final ThemeData customTheme = ThemeData(
   dividerTheme: const DividerThemeData(color: _border, thickness: 1),
   snackBarTheme: SnackBarThemeData(
     behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
     insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   ),
   textTheme: const TextTheme(
-    headlineMedium: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, color: _textTitle),
-    titleLarge: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, color: _textTitle),
-    titleMedium: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, color: _textTitle),
+    headlineMedium: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w700,
+      color: _textTitle,
+    ),
+    titleLarge: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      color: _textTitle,
+    ),
+    titleMedium: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w500,
+      color: _textTitle,
+    ),
     bodyLarge: TextStyle(fontFamily: 'Inter', color: _textTitle),
     bodyMedium: TextStyle(fontFamily: 'Inter', color: _textBody),
     bodySmall: TextStyle(fontFamily: 'Inter', color: _textBody, fontSize: 12),
-    labelLarge: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, color: _textTitle),
+    labelLarge: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      color: _textTitle,
+    ),
   ),
 );
 
@@ -163,7 +185,9 @@ final ThemeData customLightTheme = ThemeData(
     backgroundColor: _lightAccent,
     foregroundColor: Colors.white,
     elevation: 4,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+    ),
   ),
   iconButtonTheme: IconButtonThemeData(
     style: IconButton.styleFrom(foregroundColor: _lightTextBody),
@@ -172,7 +196,9 @@ final ThemeData customLightTheme = ThemeData(
     style: FilledButton.styleFrom(
       backgroundColor: _lightAccent,
       foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     ),
   ),
@@ -197,16 +223,38 @@ final ThemeData customLightTheme = ThemeData(
   dividerTheme: const DividerThemeData(color: _lightBorder, thickness: 1),
   snackBarTheme: SnackBarThemeData(
     behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
     insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   ),
   textTheme: const TextTheme(
-    headlineMedium: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, color: _lightTextTitle),
-    titleLarge: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, color: _lightTextTitle),
-    titleMedium: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, color: _lightTextTitle),
+    headlineMedium: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w700,
+      color: _lightTextTitle,
+    ),
+    titleLarge: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      color: _lightTextTitle,
+    ),
+    titleMedium: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w500,
+      color: _lightTextTitle,
+    ),
     bodyLarge: TextStyle(fontFamily: 'Inter', color: _lightTextTitle),
     bodyMedium: TextStyle(fontFamily: 'Inter', color: _lightTextBody),
-    bodySmall: TextStyle(fontFamily: 'Inter', color: _lightTextBody, fontSize: 12),
-    labelLarge: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, color: _lightTextTitle),
+    bodySmall: TextStyle(
+      fontFamily: 'Inter',
+      color: _lightTextBody,
+      fontSize: 12,
+    ),
+    labelLarge: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      color: _lightTextTitle,
+    ),
   ),
 );

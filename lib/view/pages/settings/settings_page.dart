@@ -28,18 +28,27 @@ class SettingsPage extends StatelessWidget {
             builder: (context, mode, _) {
               final isDark = mode == ThemeMode.dark;
               return SwitchListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 secondary: Icon(
                   isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
                   color: cs.primary,
                 ),
                 title: const Text('Dark Mode'),
-                subtitle: Text(isDark ? 'Tema escuro ativado' : 'Tema claro ativado'),
+                subtitle: Text(
+                  isDark ? 'Tema escuro ativado' : 'Tema claro ativado',
+                ),
                 value: isDark,
                 activeTrackColor: cs.primary,
                 onChanged: (value) {
-                  themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+                  themeNotifier.value = value
+                      ? ThemeMode.dark
+                      : ThemeMode.light;
                 },
               );
             },

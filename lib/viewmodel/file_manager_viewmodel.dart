@@ -45,12 +45,10 @@ class FileManagerViewModel {
     loading.value = {...loading.value, path};
     erro.value = '';
     try {
-      final response = await _repository.listFiles(
-        serial: serial,
-        path: path,
-      );
+      final response = await _repository.listFiles(serial: serial, path: path);
       // dirs first, then files, both sorted alphabetically
-      final sorted = [...response.entries]..sort((a, b) {
+      final sorted = [...response.entries]
+        ..sort((a, b) {
           if (a.isDir == b.isDir) return a.name.compareTo(b.name);
           return a.isDir ? -1 : 1;
         });

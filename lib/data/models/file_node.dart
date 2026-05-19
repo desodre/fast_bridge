@@ -51,8 +51,7 @@ class FileNode {
     );
   }
 
-  String fullPath(String parentPath) =>
-      '$parentPath$name${isDir ? '/' : ''}';
+  String fullPath(String parentPath) => '$parentPath$name${isDir ? '/' : ''}';
 
   String get formattedSize {
     if (isDir) return '—';

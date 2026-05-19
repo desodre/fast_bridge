@@ -36,7 +36,9 @@ class ScreenshotPanel extends StatelessWidget {
               valueListenable: screenshot,
               builder: (context, bytes, _) {
                 if (bytes == null) {
-                  return const Center(child: Text('Could not load screenshot.'));
+                  return const Center(
+                    child: Text('Could not load screenshot.'),
+                  );
                 }
                 return ValueListenableBuilder<UiNode?>(
                   valueListenable: selectedNode,

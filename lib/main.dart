@@ -5,23 +5,9 @@ import 'package:fast_bridge_front/view/pages/full_control_window/full_control_wi
 import 'package:fast_bridge_front/view/pages/settings/settings_page.dart';
 import 'package:fast_bridge_front/view/ui/theme.dart';
 import 'package:flutter/material.dart';
-// import 'dart:io';
-// import 'dart:developer' as dev;
-
-// void startBackend() async {
-//   try {
-//     Process backProcess = await Process.start('./lib/exec/adb_sidecar_api', []);
-//     dev.log("Backend started");
-//     dev.log("Backend PID: ${backProcess.pid}");
-//   } catch (e) {
-//     dev.log('Erro ao inciar o back');
-//     dev.log(e.toString());
-//   }
-// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // startBackend();
   runApp(FastBridgeApp());
 }
 
@@ -43,7 +29,8 @@ class FastBridgeApp extends StatelessWidget {
           onGenerateRoute: (settings) {
             final uri = Uri.parse(settings.name ?? '/');
 
-            if (uri.pathSegments.length == 1 && uri.pathSegments[0] == 'settings') {
+            if (uri.pathSegments.length == 1 &&
+                uri.pathSegments[0] == 'settings') {
               return MaterialPageRoute(
                 builder: (context) => const SettingsPage(),
                 settings: settings,
@@ -55,7 +42,8 @@ class FastBridgeApp extends StatelessWidget {
                 uri.pathSegments[2] == 'full_control') {
               final serial = uri.pathSegments[1];
               return MaterialPageRoute(
-                builder: (BuildContext context) => FullControlWindow(serial: serial),
+                builder: (BuildContext context) =>
+                    FullControlWindow(serial: serial),
                 settings: settings,
               );
             }
@@ -65,7 +53,8 @@ class FastBridgeApp extends StatelessWidget {
                 uri.pathSegments[2] == 'file_manager') {
               final serial = uri.pathSegments[1];
               return MaterialPageRoute(
-                builder: (BuildContext context) => FileManagerPage(serial: serial),
+                builder: (BuildContext context) =>
+                    FileManagerPage(serial: serial),
                 settings: settings,
               );
             }

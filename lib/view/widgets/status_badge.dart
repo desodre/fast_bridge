@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class StatusBadge extends StatelessWidget {
-  const StatusBadge({
-    super.key,
-    required this.isOnline,
-    required this.label,
-  });
+  const StatusBadge({super.key, required this.isOnline, required this.label});
 
   final bool isOnline;
   final String label;
