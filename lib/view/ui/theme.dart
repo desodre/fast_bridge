@@ -98,13 +98,6 @@ final ThemeData customTheme = ThemeData(
     ),
   ),
   dividerTheme: const DividerThemeData(color: _border, thickness: 1),
-  snackBarTheme: SnackBarThemeData(
-    behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(12)),
-    ),
-    insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  ),
   textTheme: const TextTheme(
     headlineMedium: TextStyle(
       fontFamily: 'Inter',
@@ -221,13 +214,6 @@ final ThemeData customLightTheme = ThemeData(
     ),
   ),
   dividerTheme: const DividerThemeData(color: _lightBorder, thickness: 1),
-  snackBarTheme: SnackBarThemeData(
-    behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(12)),
-    ),
-    insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  ),
   textTheme: const TextTheme(
     headlineMedium: TextStyle(
       fontFamily: 'Inter',

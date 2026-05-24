@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fast_bridge_front/view/ui/toast_service.dart';
 
 enum DeviceSection { device, terminal, fileManager, appManager, fullControl }
 
@@ -69,12 +70,7 @@ class DeviceNavDropdown extends StatelessWidget {
         if (route != null) {
           Navigator.pushReplacementNamed(context, route);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Coming soon'),
-              duration: Duration(seconds: 2),
-            ),
-          );
+          ToastService.info('Coming soon', context: context);
         }
       },
       itemBuilder: (context) => DeviceSection.values.map((section) {

@@ -1,4 +1,5 @@
 import 'package:fast_bridge_front/viewmodel/home_viewmodel.dart';
+import 'package:fast_bridge_front/view/ui/toast_service.dart';
 import 'package:flutter/material.dart';
 
 class RefreshFab extends StatelessWidget {
@@ -13,24 +14,7 @@ class RefreshFab extends StatelessWidget {
       onPressed: () async {
         await viewModel.getDevices();
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.sync, color: Colors.white, size: 18),
-                SizedBox(width: 10),
-                Text(
-                  'Device list refreshed',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        ToastService.info('Device list refreshed', context: context);
       },
       child: const Icon(Icons.refresh_rounded, size: 26),
     );

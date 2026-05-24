@@ -2,6 +2,7 @@ import 'dart:developer' as dev;
 
 import 'package:fast_bridge_front/view/pages/full_control_window/widgets/control_bar.dart';
 import 'package:fast_bridge_front/view/pages/full_control_window/widgets/stream_view.dart';
+import 'package:fast_bridge_front/view/ui/toast_service.dart';
 import 'package:fast_bridge_front/view/widgets/loading_indicator.dart';
 import 'package:fast_bridge_front/viewmodel/full_control_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +34,9 @@ class _FullControlWindowState extends State<FullControlWindow> {
   }
 
   void _handleSendText(String text) {
-    final messenger = ScaffoldMessenger.of(context);
     _viewModel.sendText(text).catchError((e) {
       dev.log('Failed to send text: $e');
-      messenger.showSnackBar(
-        SnackBar(content: Text('Failed to send text: $e')),
-      );
+      ToastService.error('Failed to send text', description: '$e');
     });
   }
 
@@ -154,7 +152,7 @@ class _FullControlWindowState extends State<FullControlWindow> {
           children: [
             Expanded(
               child: StreamView(
-                frame: _viewModel.frame,
+                streamUrl: _viewModel.streamUrl,
                 onPointerDown: (pos, size) =>
                     _viewModel.sendTouch('touchDown', pos, size),
                 onPointerMove: (pos, size) =>

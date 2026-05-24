@@ -1,6 +1,7 @@
 import 'package:fast_bridge_front/data/repositories/device_repository.dart';
 import 'package:fast_bridge_front/view/pages/home/widgets/device_list.dart';
 import 'package:fast_bridge_front/view/pages/home/widgets/refresh_fab.dart';
+import 'package:fast_bridge_front/view/ui/toast_service.dart';
 import 'package:fast_bridge_front/viewmodel/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 
@@ -33,41 +34,17 @@ class _HomePageState extends State<HomePage> {
   Future<void> _checkHealth() async {
     final ok = await _repository.healthCheck();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: ok ? const Color(0xDD2E7D32) : const Color(0xDDB71C1C),
-        duration: Duration(seconds: ok ? 2 : 5),
-        content: Row(
-          children: [
-            Icon(
-              ok ? Icons.check_circle_outline : Icons.error_outline,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                ok
-                    ? 'ADB server online'
-                    : 'ADB server offline — verifique se o adb está ativo',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
-        action: ok
-            ? null
-            : SnackBarAction(
-                label: 'Retry',
-                textColor: Colors.white,
-                onPressed: _checkHealth,
-              ),
-      ),
+    if (ok) {
+      ToastService.success('ADB server online', context: context);
+      return;
+    }
+
+    ToastService.error(
+      'ADB server offline',
+      description: 'Verifique se o adb está ativo',
+      context: context,
+      actionLabel: 'Retry',
+      onAction: _checkHealth,
     );
   }
 
