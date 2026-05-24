@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:adb_utils/adb_utils.dart';
 import 'package:fast_bridge_front/view/ui/toast_service.dart';
-import 'package:fast_bridge_front/viewmodel/device_viewmodel.dart';
+import 'package:fast_bridge_front/viewmodel/home_viewmodel.dart';
 
 class DeviceMonitorService {
   final AdbClient _adbClient = AdbClient();
   StreamSubscription<DeviceEvent>? _subscription;
+  final HomeViewModel _homeViewModel = HomeViewModel();
 
   /// Inicia o monitoramento em segundo plano
   void startMonitoring() {
@@ -47,6 +48,8 @@ class DeviceMonitorService {
               mensagem: 'O dispositivo ${event.serial} está em um estado desconhecido.',
               tipo: AvisoTipo.erro,);
             break;
+            
+            
         }
       },
       onError: (error) {

@@ -34,7 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  adb_utils: ^0.4.4
+  adb_utils: ^0.4.6
   xml: ^6.5.0
   media_kit: ^1.1.11
   media_kit_video: ^1.3.0
@@ -57,9 +57,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
-dependency_overrides:
-  adb_utils:
-    path: /home/desodre/Projects/adb_utils
+# dependency_overrides:
+#   adb_utils:
+#     path: /home/desodre/Projects/adb_utils
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
