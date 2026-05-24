@@ -1,11 +1,11 @@
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:fast_bridge_front/view/pages/device_page/widgets/node_preview_data.dart';
 import 'package:flutter/material.dart';
 
 class NodePropertiesPanel extends StatelessWidget {
   const NodePropertiesPanel({super.key, required this.selectedNode});
 
-  final ValueNotifier<UiNode?> selectedNode;
+  final ValueNotifier<adb.UiNode?> selectedNode;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class NodePropertiesPanel extends StatelessWidget {
             const Divider(height: 20),
             Expanded(
               child: SingleChildScrollView(
-                child: ValueListenableBuilder<UiNode?>(
+                child: ValueListenableBuilder<adb.UiNode?>(
                   valueListenable: selectedNode,
                   builder: (context, node, _) => NodePreviewData(node: node),
                 ),

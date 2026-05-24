@@ -1,12 +1,12 @@
 import 'dart:developer';
 
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NodePreviewData extends StatelessWidget {
   const NodePreviewData({super.key, required this.node});
-  final UiNode? node;
+  final adb.UiNode? node;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +40,12 @@ class NodePreviewData extends StatelessWidget {
         _PropRow(label: 'Text', value: node!.text),
         _PropRow(label: 'Resource ID', value: node!.resourceId),
         _PropRow(label: 'Class', value: node!.className),
+        _PropRow(label: 'Package', value: node!.packageName),
+        _PropRow(label: 'Content Desc', value: node!.contentDesc),
+        _PropRow(label: 'Clickable', value: node!.clickable.toString()),
+        _PropRow(label: 'Enabled', value: node!.enabled.toString()),
+        _PropRow(label: 'Focused', value: node!.focused.toString()),
+        _PropRow(label: 'Visible', value: node!.visibleToUser.toString()),
         _PropRow(
           label: 'Bounds',
           value:

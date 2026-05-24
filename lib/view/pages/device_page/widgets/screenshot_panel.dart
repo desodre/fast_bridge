@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:flutter/material.dart';
 
 class ScreenshotPanel extends StatelessWidget {
@@ -17,7 +17,7 @@ class ScreenshotPanel extends StatelessWidget {
   final ValueNotifier<bool> isLoading;
   final double nativeWidth;
   final double nativeHeight;
-  final ValueNotifier<UiNode?> selectedNode;
+  final ValueNotifier<adb.UiNode?> selectedNode;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class ScreenshotPanel extends StatelessWidget {
                     child: Text('Could not load screenshot.'),
                   );
                 }
-                return ValueListenableBuilder<UiNode?>(
+                return ValueListenableBuilder<adb.UiNode?>(
                   valueListenable: selectedNode,
                   builder: (context, node, _) {
                     return LayoutBuilder(

@@ -1,4 +1,4 @@
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:fast_bridge_front/view/pages/device_page/widgets/hierarchy_tree_view.dart';
 import 'package:flutter/material.dart';
 
@@ -12,11 +12,11 @@ class HierarchyPanel extends StatelessWidget {
     required this.onNodeSelected,
   });
 
-  final ValueNotifier<UiHierarchy?> hierarchy;
+  final ValueNotifier<adb.UiHierarchy?> hierarchy;
   final ValueNotifier<bool> isLoading;
   final ValueNotifier<String> erro;
-  final ValueNotifier<UiNode?> selectedNode;
-  final ValueChanged<UiNode?> onNodeSelected;
+  final ValueNotifier<adb.UiNode?> selectedNode;
+  final ValueChanged<adb.UiNode?> onNodeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class HierarchyPanel extends StatelessWidget {
                   if (loading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  return ValueListenableBuilder<UiHierarchy?>(
+                  return ValueListenableBuilder<adb.UiHierarchy?>(
                     valueListenable: hierarchy,
                     builder: (context, hier, _) {
                       if (hier == null) {
@@ -80,7 +80,7 @@ class HierarchyPanel extends StatelessWidget {
                           },
                         );
                       }
-                      return ValueListenableBuilder<UiNode?>(
+                      return ValueListenableBuilder<adb.UiNode?>(
                         valueListenable: selectedNode,
                         builder: (context, node, _) {
                           return HierarchyTreeView(

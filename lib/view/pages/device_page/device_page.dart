@@ -1,3 +1,4 @@
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:fast_bridge_front/data/models/screen_info.dart';
 import 'package:fast_bridge_front/view/pages/device_page/widgets/hierarchy_panel.dart';
 import 'package:fast_bridge_front/view/pages/device_page/widgets/node_properties_panel.dart';
@@ -69,6 +70,30 @@ class _DevicePageState extends State<DevicePage> {
                   ),
                   label: Text(
                     '${info.width} × ${info.height}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  side: BorderSide(color: cs.primary.withAlpha(60)),
+                  backgroundColor: cs.primary.withAlpha(20),
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                ),
+              );
+            },
+          ),
+          ValueListenableBuilder<adb.UiHierarchy?>(
+            valueListenable: _viewModel.hierarchy,
+            builder: (context, hierarchy, _) {
+              if (hierarchy == null) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Chip(
+                  avatar: Icon(
+                    Icons.screen_rotation_alt_rounded,
+                    size: 16,
+                    color: cs.primary,
+                  ),
+                  label: Text(
+                    'Rot ${hierarchy.rotation}',
                     style: const TextStyle(fontSize: 12),
                   ),
                   side: BorderSide(color: cs.primary.withAlpha(60)),

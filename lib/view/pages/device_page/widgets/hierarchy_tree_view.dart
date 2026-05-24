@@ -1,10 +1,10 @@
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:flutter/material.dart';
 
 class HierarchyTreeView extends StatelessWidget {
-  final UiHierarchy hierarchy;
-  final UiNode? selectedNode;
-  final ValueChanged<UiNode?> onNodeSelected;
+  final adb.UiHierarchy hierarchy;
+  final adb.UiNode? selectedNode;
+  final ValueChanged<adb.UiNode?> onNodeSelected;
 
   const HierarchyTreeView({
     super.key,
@@ -29,9 +29,9 @@ class HierarchyTreeView extends StatelessWidget {
 }
 
 class NodeTiles extends StatefulWidget {
-  final UiNode node;
-  final ValueChanged<UiNode?> onNodeSelected;
-  final UiNode? selectedUiNode;
+  final adb.UiNode node;
+  final ValueChanged<adb.UiNode?> onNodeSelected;
+  final adb.UiNode? selectedUiNode;
   final int depth;
 
   const NodeTiles({

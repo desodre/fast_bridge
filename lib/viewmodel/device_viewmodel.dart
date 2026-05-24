@@ -1,5 +1,5 @@
+import 'package:adb_utils/adb_utils.dart' as adb;
 import 'package:fast_bridge_front/data/models/screen_info.dart';
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
 import 'package:fast_bridge_front/data/repositories/device_repository.dart';
 import 'package:flutter/foundation.dart';
 
@@ -11,21 +11,14 @@ class DeviceViewModel extends ChangeNotifier {
 
   final ValueNotifier<ScreenInfo?> screenInfo = ValueNotifier(null);
   final ValueNotifier<Uint8List?> screenshot = ValueNotifier(null);
-  final ValueNotifier<UiHierarchy?> hierarchy = ValueNotifier(null);
-  final ValueNotifier<UiNode?> selectedNode = ValueNotifier(null);
+  final ValueNotifier<adb.UiHierarchy?> hierarchy = ValueNotifier(null);
+  final ValueNotifier<adb.UiNode?> selectedNode = ValueNotifier(null);
   final ValueNotifier<bool> isLoadingScreenInfo = ValueNotifier(false);
   final ValueNotifier<bool> isLoadingScreenshot = ValueNotifier(false);
   final ValueNotifier<bool> isLoadingHierarchy = ValueNotifier(false);
   final ValueNotifier<String> erro = ValueNotifier('');
 
   Future<void> init() async {
-    try {
-      await _repository.initializeUiAgent(serial);
-    } catch (e) {
-      erro.value = 'Failed to initialize UI agent: $e';
-      notifyListeners();
-    }
-
     await Future.wait([_loadScreenInfo(), refresh()]);
   }
 
@@ -72,7 +65,7 @@ class DeviceViewModel extends ChangeNotifier {
     }
   }
 
-  void selectNode(UiNode? node) {
+  void selectNode(adb.UiNode? node) {
     selectedNode.value = node;
     notifyListeners();
   }

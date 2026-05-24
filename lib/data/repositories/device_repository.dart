@@ -1,18 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:adb_utils/adb_utils.dart' as adb;
-// ignore: implementation_imports
-import 'package:adb_utils/src/phantom/phantom_client.dart';
+import 'package:fast_bridge_front/core/logging/app_logger.dart';
 import 'package:fast_bridge_front/data/models/fetch_device_info.dart';
 import 'package:fast_bridge_front/data/models/file_node.dart';
 import 'package:fast_bridge_front/data/models/screen_info.dart';
-import 'package:fast_bridge_front/data/models/ui_hierarchy.dart';
-
-extension _PhantomAccess on adb.AdbDevice {
-  PhantomClient get phantom => PhantomClient(device: this);
-}
 
 class DeviceRepository {
   DeviceRepository._internal();
@@ -22,13 +17,16 @@ class DeviceRepository {
   factory DeviceRepository() => _instance;
 
   final adb.AdbClient _adb = adb.AdbClient();
+  final AppLogger _logger = AppLogger.instance;
   final Map<String, adb.AdbDevice> _deviceCache = {};
+  final Map<String, adb.PhantomClient> _phantomCache = {};
   final Set<String> _initializedUiAgents = {};
-  (String targetApkPath, String agentApkPath)? _phantomApkPaths;
 
   Future<List<adb.DeviceInfo>> fetchDevicesSerials() async {
     final devices = await _adb.deviceList();
     _deviceCache.clear();
+    _phantomCache.clear();
+    _initializedUiAgents.clear();
     for (final deviceInfo in devices) {
       _deviceCache[deviceInfo.serial] = await _adb.device(
         serial: deviceInfo.serial,
@@ -63,23 +61,57 @@ class DeviceRepository {
     return resolved;
   }
 
-  Future<void> initializeUiAgent(String serial) async {
-    await _startUiAgent(serial, forceRestart: true);
-    _initializedUiAgents.add(serial);
+  Future<adb.PhantomClient> _resolvePhantom(String serial) async {
+    final cached = _phantomCache[serial];
+    if (cached != null) {
+      return cached;
+    }
+
+    final device = await _resolveDevice(serial);
+    final resolved = device.phantom;
+    _phantomCache[serial] = resolved;
+    return resolved;
   }
 
-  Future<void> _startUiAgent(String serial, {bool forceRestart = false}) async {
-    final device = await _resolveDevice(serial);
-    final (targetApkPath, agentApkPath) = await _resolveBundledPhantomApks();
-    if (forceRestart) {
-      try {
-        await device.forwardRemove('tcp:9008');
-      } catch (_) {
-        // ignore forward cleanup errors; startAgent will set it again.
-      }
+  Future<void> initializeUiAgent(String serial) async {
+    _logger.info(
+      'Inicializando agente UiAutomator',
+      context: 'phantom',
+      payload: 'serial=$serial',
+    );
+    try {
+      await _startUiAgent(serial);
+      _initializedUiAgents.add(serial);
+      _logger.info(
+        'Agente UiAutomator inicializado',
+        context: 'phantom',
+        payload: 'serial=$serial',
+      );
+    } catch (error, stackTrace) {
+      final diagnostic = await _collectAndroidRuntimeDiagnostics(serial);
+      _logger.error(
+        'Falha ao inicializar agente UiAutomator',
+        context: 'phantom',
+        error: error,
+        stackTrace: stackTrace,
+        diagnostics: diagnostic,
+        payload: 'serial=$serial',
+      );
+      rethrow;
     }
-    await device.phantom.startAgent(targetApkPath, agentApkPath);
+  }
+
+  Future<void> _startUiAgent(String serial) async {
+    final phantom = await _resolvePhantom(serial);
+    await phantom.startAgent();
     await Future.delayed(const Duration(seconds: 2));
+    _logger.info(
+      'Túnel TCP do Phantom estabelecido',
+      context: 'phantom',
+      payload:
+          'serial=$serial hostCmd=${phantom.hostCommandPort} hostVid=${phantom.hostVideoPort} '
+          'deviceCmd=${phantom.deviceCommandPort} deviceVid=${phantom.deviceVideoPort}',
+    );
   }
 
   bool _isTransientPhantomError(Object error) {
@@ -97,93 +129,77 @@ class DeviceRepository {
     await initializeUiAgent(serial);
   }
 
-  Future<(String targetApkPath, String agentApkPath)>
-  _resolveBundledPhantomApks() async {
-    final cached = _phantomApkPaths;
-    if (cached != null) {
-      return cached;
-    }
+  Future<adb.UiHierarchy> getScreenHierarchy(String serial) async {
+    try {
+      await _ensureUiAgentReady(serial);
+      final phantom = await _resolvePhantom(serial);
 
-    final targetApk = await _resolveAdbUtilsApkPath('target.apk');
-    final agentApk = await _resolveAdbUtilsApkPath('agent.apk');
+      const maxAttempts = 3;
+      Object? lastError;
+      for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          final hierarchy = await phantom.dumpWindowHierarchy();
+          _logger.debug(
+            'Dump de hierarquia recebido',
+            context: 'uiautomator',
+            payload: 'serial=$serial rotation=${hierarchy.rotation}',
+          );
+          return hierarchy;
+        } catch (error, stackTrace) {
+          lastError = error;
+          if (!_isTransientPhantomError(error) || attempt == maxAttempts) {
+            final diagnostics = await _collectAndroidRuntimeDiagnostics(serial);
+            _logger.error(
+              'Falha ao obter hierarquia via Phantom',
+              context: 'uiautomator',
+              error: error,
+              stackTrace: stackTrace,
+              diagnostics: diagnostics,
+              payload: 'serial=$serial attempt=$attempt/$maxAttempts',
+            );
+            break;
+          }
 
-    if (!File(targetApk).existsSync() || !File(agentApk).existsSync()) {
+          _logger.warning(
+            'Falha transitória no socket do Phantom, tentando reiniciar agente',
+            context: 'uiautomator',
+            payload: 'serial=$serial attempt=$attempt/$maxAttempts',
+          );
+          await _startUiAgent(serial);
+        }
+      }
+
       throw Exception(
-        'Bundled Phantom APKs were not found in adb_utils package.',
+        'Failed to load screen hierarchy via Phantom: $lastError',
       );
+    } catch (error, stackTrace) {
+      _logger.warning(
+        'Fallback para uiautomator dump via shell',
+        context: 'uiautomator',
+        error: error,
+        stackTrace: stackTrace,
+        payload: 'serial=$serial',
+      );
+      return _getScreenHierarchyViaShell(serial);
     }
-
-    _phantomApkPaths = (targetApk, agentApk);
-    return _phantomApkPaths!;
   }
 
-  Future<String> _resolveAdbUtilsApkPath(String apkName) async {
-    // 1) Prefer package_config when running from project workspace.
-    final packageConfig = File('.dart_tool/package_config.json');
-    if (packageConfig.existsSync()) {
-      final configJson =
-          jsonDecode(await packageConfig.readAsString())
-              as Map<String, dynamic>;
-      final packages = (configJson['packages'] as List<dynamic>? ?? const []);
-      String? rootUriRaw;
-      for (final pkg in packages) {
-        if (pkg is Map<String, dynamic> && pkg['name'] == 'adb_utils') {
-          rootUriRaw = pkg['rootUri'] as String?;
-          break;
-        }
-      }
-      if (rootUriRaw != null && rootUriRaw.isNotEmpty) {
-        final normalized = rootUriRaw.endsWith('/')
-            ? rootUriRaw
-            : '$rootUriRaw/';
-        final uri = Uri.parse(normalized);
-        if (uri.scheme == 'file') {
-          final rootPath = Directory.fromUri(uri).path;
-          return '$rootPath/lib/src/phantom/apks/$apkName';
-        }
-      }
-    }
-
-    // 2) Fallback to PUB_CACHE conventional path.
-    final pubCache = Platform.environment['PUB_CACHE'];
-    final home = Platform.environment['HOME'];
-    final base = pubCache ?? (home != null ? '$home/.pub-cache' : null);
-    if (base != null) {
-      return '$base/hosted/pub.dev/adb_utils-0.3.2/lib/src/phantom/apks/$apkName';
-    }
-
-    throw Exception('Could not resolve adb_utils package path for $apkName.');
-  }
-
-  Future<UiHierarchy> getScreenHierarchy(String serial) async {
-    await _ensureUiAgentReady(serial);
+  Future<adb.UiHierarchy> _getScreenHierarchyViaShell(String serial) async {
     final device = await _resolveDevice(serial);
-
-    const maxAttempts = 3;
-    Object? lastError;
-    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        final xmlDump = await device.phantom.dumpWindow();
-        return UiHierarchy.fromXmlString(xmlDump);
-      } catch (error) {
-        lastError = error;
-        if (!_isTransientPhantomError(error) || attempt == maxAttempts) {
-          rethrow;
-        }
-
-        await _startUiAgent(serial, forceRestart: true);
-      }
-    }
-
-    throw Exception('Failed to load screen hierarchy: $lastError');
+    const remotePath = '/sdcard/window_dump.xml';
+    await device.shell(
+      'uiautomator dump $remotePath >/dev/null 2>&1 || uiautomator dump $remotePath',
+    );
+    final xmlDump = await device.shell('cat $remotePath');
+    return adb.UiHierarchy.fromXmlString(xmlDump);
   }
 
   Future<bool> clickElementByText(String serial, String text) async {
-    final device = await _resolveDevice(serial);
-    return device.phantom.clickByText(text);
+    final phantom = await _resolvePhantom(serial);
+    return phantom.clickByText(text);
   }
 
-  Future<UiHierarchy> getUiHierarchy({
+  Future<adb.UiHierarchy> getUiHierarchy({
     required String serial,
     String format = 'xml',
   }) async {
@@ -199,6 +215,68 @@ class DeviceRepository {
   Future<Uint8List> getScreenshot({required String serial, int id = 0}) async {
     final device = await _resolveDevice(serial);
     return device.screenshot();
+  }
+
+  Stream<List<int>> getH264VideoStream({required String serial}) {
+    final controller = StreamController<List<int>>();
+    StreamSubscription<List<int>>? streamSubscription;
+
+    controller.onListen = () async {
+      try {
+        await _ensureUiAgentReady(serial);
+        final phantom = await _resolvePhantom(serial);
+        final videoStream = await phantom.startVideoStream();
+        _logger.info(
+          'Stream de vídeo iniciada',
+          context: 'video',
+          payload: 'serial=$serial hostVid=${phantom.hostVideoPort}',
+        );
+
+        // Never log raw video chunks (List<int>) from Phantom TCP stream.
+        streamSubscription = videoStream.listen(
+          controller.add,
+          onError: (error, stackTrace) {
+            _logger.error(
+              'Erro crítico no socket do stream H.264',
+              context: 'video',
+              error: error,
+              stackTrace: stackTrace,
+              payload: 'serial=$serial',
+            );
+            controller.addError(error, stackTrace);
+          },
+          onDone: () async {
+            _logger.info(
+              'Stream de vídeo encerrada',
+              context: 'video',
+              payload: 'serial=$serial',
+            );
+            if (!controller.isClosed) {
+              await controller.close();
+            }
+          },
+          cancelOnError: true,
+        );
+      } catch (error, stackTrace) {
+        final diagnostics = await _collectAndroidRuntimeDiagnostics(serial);
+        _logger.error(
+          'Falha ao iniciar stream H.264',
+          context: 'video',
+          error: error,
+          stackTrace: stackTrace,
+          diagnostics: diagnostics,
+          payload: 'serial=$serial',
+        );
+        controller.addError(error, stackTrace);
+        await controller.close();
+      }
+    };
+
+    controller.onCancel = () async {
+      await streamSubscription?.cancel();
+    };
+
+    return controller.stream;
   }
 
   Future<void> sendText({required String serial, required String text}) async {
@@ -295,5 +373,48 @@ class DeviceRepository {
     } catch (_) {
       return false;
     }
+  }
+
+  Future<String?> _collectAndroidRuntimeDiagnostics(String serial) async {
+    try {
+      final result = await Process.run('adb', [
+        '-s',
+        serial,
+        'shell',
+        'logcat -d -s AndroidRuntime PhantomServer | tail -n 30',
+      ]);
+      final stdoutText = _decodeProcessOutput(result.stdout);
+      final stderrText = _decodeProcessOutput(result.stderr);
+      final combined = [
+        stdoutText.trim(),
+        stderrText.trim(),
+      ].where((chunk) => chunk.isNotEmpty).join('\n');
+      if (combined.isEmpty) {
+        return null;
+      }
+      return combined;
+    } catch (error, stackTrace) {
+      _logger.warning(
+        'Falha ao coletar logcat de diagnóstico',
+        context: 'diagnostics',
+        error: error,
+        stackTrace: stackTrace,
+        payload: 'serial=$serial',
+      );
+      return null;
+    }
+  }
+
+  String _decodeProcessOutput(Object? value) {
+    if (value == null) {
+      return '';
+    }
+    if (value is String) {
+      return value;
+    }
+    if (value is List<int>) {
+      return utf8.decode(value, allowMalformed: true);
+    }
+    return value.toString();
   }
 }

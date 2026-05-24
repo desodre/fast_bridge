@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:fast_bridge_front/data/models/screen_info.dart';
 import 'package:fast_bridge_front/data/repositories/device_repository.dart';
+import 'package:fast_bridge_front/data/streaming/h264_local_http_relay.dart';
 import 'package:flutter/foundation.dart';
 
 enum ConnState { idle, fetchingInfo, connectingWs, streaming, error }
@@ -13,15 +14,15 @@ class FullControlViewModel {
 
   FullControlViewModel({required this.serial});
 
-  Timer? _frameTimer;
+  H264LocalHttpRelay? _relay;
   ScreenInfo? _screenInfo;
 
   final ValueNotifier<ConnState> state = ValueNotifier(ConnState.idle);
-  final ValueNotifier<Uint8List?> frame = ValueNotifier(null);
+  final ValueNotifier<Uri?> streamUrl = ValueNotifier(null);
   final ValueNotifier<String?> error = ValueNotifier(null);
 
   Future<void> connect() async {
-    _cleanup();
+    await _cleanup();
     state.value = ConnState.fetchingInfo;
     error.value = null;
 
@@ -35,22 +36,20 @@ class FullControlViewModel {
       return;
     }
 
-    state.value = ConnState.streaming;
-    await _captureFrame();
-    _frameTimer = Timer.periodic(const Duration(milliseconds: 350), (_) async {
-      await _captureFrame();
-    });
-  }
-
-  Future<void> _captureFrame() async {
+    state.value = ConnState.connectingWs;
     try {
-      frame.value = await _repository.getScreenshot(serial: serial);
+      final source = _repository.getH264VideoStream(serial: serial);
+      final relay = H264LocalHttpRelay(source: source);
+      final localUrl = await relay.start();
+      _relay = relay;
+      streamUrl.value = localUrl;
     } catch (e) {
       state.value = ConnState.error;
-      error.value = 'Failed to capture frame: $e';
-      _frameTimer?.cancel();
-      _frameTimer = null;
+      error.value = 'Failed to start local stream relay: $e';
+      return;
     }
+
+    state.value = ConnState.streaming;
   }
 
   Future<void> sendTouch(
@@ -120,16 +119,19 @@ class FullControlViewModel {
     await _repository.sendText(serial: serial, text: text);
   }
 
-  void _cleanup() {
-    _frameTimer?.cancel();
-    _frameTimer = null;
-    frame.value = null;
+  Future<void> _cleanup() async {
+    streamUrl.value = null;
+    final relay = _relay;
+    _relay = null;
+    if (relay != null) {
+      await relay.stop();
+    }
   }
 
   void dispose() {
-    _cleanup();
+    unawaited(_cleanup());
     state.dispose();
-    frame.dispose();
+    streamUrl.dispose();
     error.dispose();
   }
 }
